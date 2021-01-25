@@ -2,6 +2,6 @@
 
 
 ## Technologies
-` Angulat 11
+` Angular 11
 ` .Net Core
  
