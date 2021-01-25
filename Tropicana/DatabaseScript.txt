@@ -1,0 +1,110 @@
+﻿9:30 AM
+
+create database TropicanaMain   
+  GO
+ 
+-- change owner to sa
+ALTER AUTHORIZATION ON DATABASE::[TropicanaMain] TO [sa]
+GO
+ 
+-- set recovery model to simple 
+ALTER DATABASE [TropicanaMain] SET RECOVERY SIMPLE 
+GO
+ 
+-- change compatibility level
+ALTER DATABASE [TropicanaMain] SET COMPATIBILITY_LEVEL = 130
+GO
+ 
+ use [TropicanaMain]
+
+create database TropicanaMain   
+  GO
+ 
+-- change owner to sa
+ALTER AUTHORIZATION ON DATABASE::[TropicanaMain] TO [sa]
+GO
+ 
+-- set recovery model to simple 
+ALTER DATABASE [TropicanaMain] SET RECOVERY SIMPLE 
+GO
+ 
+-- change compatibility level
+ALTER DATABASE [TropicanaMain] SET COMPATIBILITY_LEVEL = 130
+GO
+ 
+ use [TropicanaMain]
+
+-- CREATE TABLE UserTypes
+CREATE TABLE UserTypes
+(     [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY NONCLUSTERED
+	, [Code] VARCHAR(10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [Type] VARCHAR(16) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [Description] VARCHAR(32) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [CreatedBy] VARCHAR(32) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [CreatedDate] DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET()
+);
+
+CREATE TABLE Users
+(
+	  [Id] INT NOT NULL IDENTITY(1,1) PRIMARY KEY 
+	, [UserTypeID] INT NOT NULL REFERENCES UserTypes (Id)
+	, [UserName] VARCHAR(30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [Password] VARBINARY(MAX) NOT NULL
+	, [CreatedBy] VARCHAR(32) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	, [CreatedDate] DATETIMEOFFSET DEFAULT SYSDATETIMEOFFSET()
+	, [ModifiedBy] VARCHAR(32) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+	, [ModifiedDate] DATETIMEOFFSET null
+	, [IsActive] BIT 
+	, [IsDeleted] BIT
+)
+
+
+-- Account Table
+CREATE TABLE Accounts (
+    [Id] bigint Identity(1,1) PRIMARY KEY,
+    [UserId] INT NOT NULL REFERENCES Users (Id),
+	[AccountNumber] varchar(16) NOT NULL,
+    [FirstName] varchar(32) NOT NULL,
+	[LastName] varchar(32) NOT NULL,
+	[Address] varchar(255) NOT NULL,
+    [Email] varchar(255) NOT NULL,
+	[CratedDate] datetime NOT NULL,
+	[ModifiedDate] datetime NULL,
+	[IsActive] bit NOT NULL
+);
+
+
+-- Payment Method Table
+CREATE TABLE PaymentMethods (
+    [Id] INT Identity(1,1) PRIMARY KEY,
+    [Name] varchar(60) NOT NULL,
+	[CratedDate] datetime
+);
+
+
+CREATE TABLE Payments (
+    -- Generic
+    [Id] bigint Identity(1,1) PRIMARY KEY,
+	[AccountId] bigint NOT NULL REFERENCES Accounts (Id),
+    [Amount] varchar(10),     
+	[GlobalId] UNIQUEIDENTIFIER DEFAULT NEWID(),
+    [PaymentTypeId] INT NOT NULL REFERENCES PaymentMethods (Id),
+    -- Credit Card
+    [CardName] varchar(255),
+    [CardExpiration] varchar(255),
+	[CratedDate] datetime NOT NULL
+);
+
+  
+
+
+CREATE TABLE ErrorLogs (
+    [Id] bigint Identity(1,1) PRIMARY KEY,
+    Message nvarchar (max) null,
+	MessageTemplate nvarchar (max) null,
+    Level varchar(100) NOT NULL,
+	[TimeStamp] datetime NOT NULL,
+	[Exception] nvarchar (max) null,
+	Properties nvarchar (max) null,
+	UserName varchar (50) null,
+);
