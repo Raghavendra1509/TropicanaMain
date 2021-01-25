@@ -1,0 +1,38 @@
+<mat-sidenav-container class="sidenav-container" >
+  <mat-sidenav #drawer class="sidenav" fixedInViewport="false"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
+               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [opened]="(isHandset$ | async) === false"
+               >
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item [routerLink]="['/home/']" (click)="drawer.toggle()">Home</a>
+      <a mat-list-item [routerLink]="['/account/']" (click)="drawer.toggle()">Accounts</a>
+      <a mat-list-item href="#">Users</a>
+      <a mat-list-item [routerLink]="['/home/error']" (click)="drawer.toggle()">Errors</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button type="button"
+              aria-label="Toggle sidenav"
+              mat-icon-button
+              (click)="drawer.toggle()">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>Tropicana</span>
+
+      <button type="button"
+              mat-icon-button
+              (click)="logout()">
+        <mat-icon aria-label="Sign Out">donut_large</mat-icon>
+      </button>
+    </mat-toolbar>
+    <div *ngIf="loaderService.httpProgress() | async" class="loader-container">
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+    <ng-content></ng-content>
+    <!-- Add Content Here -->
+
+  </mat-sidenav-content>
+</mat-sidenav-container>
