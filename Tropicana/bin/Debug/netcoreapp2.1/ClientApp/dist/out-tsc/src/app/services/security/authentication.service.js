@@ -1,0 +1,38 @@
+import { __decorate } from "tslib";
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { environment } from './../../../environments/environment';
+let AuthenticationService = class AuthenticationService {
+    constructor(http, router) {
+        this.http = http;
+        this.router = router;
+        this.loggedIn = new BehaviorSubject(false);
+        this.currentUserSubject = new BehaviorSubject(JSON.parse(localStorage.getItem('currentUser')));
+        this.currentUser = this.currentUserSubject.asObservable();
+    }
+    get currentUserValue() {
+        return this.currentUserSubject.value;
+    }
+    login(obj) {
+        return this.http.post(`${environment.apiUrl}User/Login`, obj)
+            .pipe(map(user => {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('Authorization', user.token);
+            this.currentUserSubject.next(user);
+            return user;
+        }));
+    }
+    logout() {
+        // remove user from local storage to log user out
+        localStorage.removeItem('currentUser');
+        this.currentUserSubject.next(null);
+        this.router.navigate(['/login']);
+    }
+};
+AuthenticationService = __decorate([
+    Injectable({ providedIn: 'root' })
+], AuthenticationService);
+export { AuthenticationService };
+//# sourceMappingURL=authentication.service.js.map
